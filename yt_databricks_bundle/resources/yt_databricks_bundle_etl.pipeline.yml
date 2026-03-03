@@ -1,0 +1,19 @@
+# The main pipeline for yt_databricks_bundle
+
+resources:
+  pipelines:
+    yt_databricks_bundle_etl:
+      name: yt_databricks_bundle_etl
+      catalog: ${var.catalog}
+      schema: ${var.schema}
+      root_path: "../src/yt_databricks_bundle_etl"
+
+      libraries:
+        - glob:
+            include: ../src/yt_databricks_bundle_etl/transformations/**
+
+      environment:
+        dependencies:
+          # We include every dependency defined by pyproject.toml by defining an editable environment
+          # that points to the folder where pyproject.toml is deployed.
+          - --editable ${workspace.file_path}
