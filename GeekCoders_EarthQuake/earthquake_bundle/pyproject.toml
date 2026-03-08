@@ -20,8 +20,8 @@ dev = [
     "ipykernel",
 ]
 
-[project.scripts]
-main = "earthquake_bundle.main:main"
+#[project.scripts]
+#main = "earthquake_bundle.main:main"
 
 [build-system]
 requires = ["hatchling"]

@@ -14,6 +14,8 @@ variables:
     description: The catalog to use
   schema:
     description: The schema to use
+  volume:
+    description: The volume where earthquake json is located
 
 targets:
   dev:
@@ -27,7 +29,8 @@ targets:
       host: https://dbc-9070505d-d246.cloud.databricks.com
     variables:
       catalog: yt_dev
-      schema: dev
+      schema: bronze_dev
+      volume: earthquake_volume
   prod:
     mode: production
     workspace:
