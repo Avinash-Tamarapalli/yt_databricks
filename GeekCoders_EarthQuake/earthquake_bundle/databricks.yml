@@ -12,7 +12,11 @@ include:
 variables:
   catalog:
     description: The catalog to use
-  schema:
+  bronze_schema:
+    description: The schema to use
+  silver_schema:
+    description: The schema to use
+  gold_schema:
     description: The schema to use
   volume:
     description: The volume where earthquake json is located
@@ -29,7 +33,9 @@ targets:
       host: https://dbc-9070505d-d246.cloud.databricks.com
     variables:
       catalog: yt_dev
-      schema: bronze_dev
+      bronze_schema: bronze_dev
+      silver_schema: silver_dev
+      gold_schema: gold_dev
       volume: earthquake_volume
   prod:
     mode: production
@@ -38,8 +44,11 @@ targets:
       # We explicitly deploy to /Workspace/Users/avinash12082001@gmail.com to make sure we only have a single copy.
       root_path: /Workspace/Users/avinash12082001@gmail.com/.bundle/${bundle.name}/${bundle.target}
     variables:
-      catalog: yt_dev
-      schema: prod
+      catalog: yt_prod
+      bronze_schema: bronze_prod
+      silver_schema: silver_prod
+      gold_schema: gold_prod
+      volume: earthquake_volume
     permissions:
       - user_name: avinash12082001@gmail.com
         level: CAN_MANAGE

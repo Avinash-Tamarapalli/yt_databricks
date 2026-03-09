@@ -1,0 +1,53 @@
+resources:
+  jobs:
+    GeekCoders_EarthQuake_Bronze_Silver_Job:
+      name: GeekCoders_EarthQuake_Bronze_Silver_Job
+      
+      parameters:
+        - name: run_date
+          default: "20260307"
+
+      tasks:
+        # Task 1: Weekly Ingestion
+        - task_key: earthquake_weekly_summary_ingestion
+          notebook_task:
+            # Using relative path so it works across dev/prod deployments
+            notebook_path: ../src/earthquake_ingestion_notebooks/earthquake_weekly_summary_ingestion.ipynb
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.bronze_schema}
+              volume_name: ${var.volume}
+            source: WORKSPACE
+
+        # Task 2: Weekly DLT Pipeline
+        - task_key: earthquake_weekly_summary_bronze
+          depends_on:
+            - task_key: earthquake_weekly_summary_ingestion
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.pipeline_earthquake_weekly_summary_bronze.id}
+            full_refresh: false
+
+        # Task 3: Details Ingestion
+        - task_key: earthquake_details_ingestion
+          depends_on:
+            - task_key: earthquake_weekly_summary_bronze
+          notebook_task:
+            notebook_path: ../src/earthquake_ingestion_notebooks/earthquake_details_ingestion.ipynb
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.bronze_schema}
+              volume_name: ${var.volume}
+            source: WORKSPACE
+
+        # Task 4: Details DLT Pipeline
+        - task_key: earthquake_details_bronze
+          depends_on:
+            - task_key: earthquake_details_ingestion
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.pipeline_earthquake_details_bronze.id}
+            full_refresh: false
+
+      queue:
+        enabled: true
+      
+      performance_target: PERFORMANCE_OPTIMIZED
